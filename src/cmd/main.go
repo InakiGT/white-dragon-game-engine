@@ -5,6 +5,7 @@ import (
 
 	"github.com/InakiGT/white-dragon-engine/src/game/scripts"
 	engineApp "github.com/InakiGT/white-dragon-engine/src/internal/engine/application"
+	engineDom "github.com/InakiGT/white-dragon-engine/src/internal/engine/domain"
 	engineInfra "github.com/InakiGT/white-dragon-engine/src/internal/engine/infra"
 	inputApp "github.com/InakiGT/white-dragon-engine/src/internal/input/application"
 	inputDom "github.com/InakiGT/white-dragon-engine/src/internal/input/domain"
@@ -31,21 +32,27 @@ func main() {
 
 	drawSceneService := rendererApp.NewDrawSceneService(rendererAdapter)
 
-	gameLoop := engineApp.NewGameLoop(drawSceneService, clockAdapter)
-
-	snakeSquare := rendererDom.NewRect(
-		"0",
+	snakeRenderer := rendererDom.NewRect(
 		*rendererDom.NewVector2(0, 0),
 		60,
 		10,
 	)
+	pointRenderer := rendererDom.NewRect(*rendererDom.NewVector2(20, 20), 10, 10)
+	snakeEntity := engineDom.NewEntity("0", nil)
+	snakeEntity.AddComponent(snakeRenderer)
 
-	point := rendererDom.NewRect("1", *rendererDom.NewVector2(20, 20), 10, 10)
+	pointEntity := engineDom.NewEntity("1", nil)
+	pointEntity.AddComponent(pointRenderer)
 
-	drawSceneService.AddElements([]*rendererDom.Rect{snakeSquare, point})
+	entities := map[engineDom.EntityID]*engineDom.Entity{}
+	entities[pointEntity.Id] = pointEntity
+	entities[snakeEntity.Id] = snakeEntity
+
+	entityManager := engineApp.NewEntityManager(engineDom.NewEntityRegistry(entities))
+	gameLoop := engineApp.NewGameLoop(drawSceneService, entityManager, clockAdapter)
 
 	script := &scripts.PlayerMovement{
-		Player: snakeSquare,
+		Player: snakeRenderer,
 		Input:  inputManager,
 		Speed:  15.0,
 	}

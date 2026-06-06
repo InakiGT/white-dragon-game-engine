@@ -3,19 +3,22 @@ package application
 import (
 	"github.com/InakiGT/white-dragon-engine/src/internal/engine/domain"
 	rendererApp "github.com/InakiGT/white-dragon-engine/src/internal/renderer/application"
+	rendererDom "github.com/InakiGT/white-dragon-engine/src/internal/renderer/domain"
 )
 
 type GameLoop struct {
-	clock     domain.Clock
-	behaviors []domain.Behavior
-	renderer  *rendererApp.DrawSceneService
+	clock         domain.Clock
+	behaviors     []domain.Behavior
+	renderer      *rendererApp.DrawSceneService
+	entityManager *EntityManager
 }
 
-func NewGameLoop(r *rendererApp.DrawSceneService, c domain.Clock) *GameLoop {
+func NewGameLoop(r *rendererApp.DrawSceneService, e *EntityManager, c domain.Clock) *GameLoop {
 	return &GameLoop{
-		renderer:  r,
-		clock:     c,
-		behaviors: make([]domain.Behavior, 0),
+		renderer:      r,
+		clock:         c,
+		entityManager: e,
+		behaviors:     make([]domain.Behavior, 0),
 	}
 }
 
@@ -32,9 +35,20 @@ func (g *GameLoop) Run(width, height int, title string) {
 
 		for _, b := range g.behaviors {
 			b.Update(ctx)
-
 		}
 
-		g.renderer.Draw()
+		g.entityManager.Flush()
+
+		renderables := make([]*rendererDom.Rect, 0)
+
+		for _, v := range g.entityManager.Registry.GetAll() {
+			comp, ok := v.Components[domain.ComponentRenderer]
+			if !ok {
+				continue
+			}
+
+			renderables = append(renderables, comp.(*rendererDom.Rect))
+		}
+		g.renderer.Draw(renderables)
 	}
 }
