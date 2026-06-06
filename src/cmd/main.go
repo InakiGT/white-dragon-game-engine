@@ -27,8 +27,10 @@ func main() {
 
 	inputManager := inputApp.NewInputManager(raylibDriver)
 
+	inputManager.BindAction("WalkingLeft", inputDom.KeyA)
 	inputManager.BindAction("WalkingRight", inputDom.KeyD)
-	inputManager.BindAction("Dash", inputDom.KeySpace, inputDom.KeyLeftShift)
+	inputManager.BindAction("WalkingUp", inputDom.KeyW)
+	inputManager.BindAction("WalkingDown", inputDom.KeyS)
 
 	drawSceneService := rendererApp.NewDrawSceneService(rendererAdapter)
 

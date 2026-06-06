@@ -30,6 +30,10 @@ func (g *GameLoop) Run(width, height int, title string) {
 	g.renderer.Init(width, height, title)
 	defer g.renderer.Close()
 
+	for _, b := range g.behaviors {
+		b.Start()
+	}
+
 	for !g.renderer.ShouldClose() {
 		ctx := g.clock.GetFrameContext()
 
