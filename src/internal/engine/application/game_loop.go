@@ -50,8 +50,10 @@ func (g *GameLoop) Run(width, height int, title string) {
 			if !ok {
 				continue
 			}
-
-			renderables = append(renderables, comp.(*rendererDom.Rect))
+			renderable := comp.(*rendererDom.Rect)
+			renderable.Position.X = v.Transform.X
+			renderable.Position.Y = v.Transform.Y
+			renderables = append(renderables, renderable)
 		}
 		g.renderer.Draw(renderables)
 	}

@@ -39,11 +39,11 @@ func main() {
 		60,
 		10,
 	)
-	pointRenderer := rendererDom.NewRect(*rendererDom.NewVector2(20, 20), 10, 10)
-	snakeEntity := engineDom.NewEntity("0", nil)
+	pointRenderer := rendererDom.NewRect(*rendererDom.NewVector2(0, 0), 10, 10)
+	snakeEntity := engineDom.NewEntity("0", nil, *engineDom.NewTransform(0, 0))
 	snakeEntity.AddComponent(snakeRenderer)
 
-	pointEntity := engineDom.NewEntity("1", nil)
+	pointEntity := engineDom.NewEntity("1", nil, *engineDom.NewTransform(20, 20))
 	pointEntity.AddComponent(pointRenderer)
 
 	entities := map[engineDom.EntityID]*engineDom.Entity{}
@@ -54,7 +54,7 @@ func main() {
 	gameLoop := engineApp.NewGameLoop(drawSceneService, entityManager, clockAdapter)
 
 	script := &scripts.PlayerMovement{
-		Player: snakeRenderer,
+		Player: snakeEntity,
 		Input:  inputManager,
 		Speed:  15.0,
 	}

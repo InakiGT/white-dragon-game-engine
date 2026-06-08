@@ -6,16 +6,16 @@ type Entity struct {
 	Id         EntityID
 	Parent     *Entity
 	Nodes      []*Entity
-	Transform  *Transform
+	Transform  Transform
 	Components map[ComponentType]Component
 }
 
-func NewEntity(id string, parent *Entity) *Entity {
+func NewEntity(id string, parent *Entity, transform Transform) *Entity {
 	return &Entity{
 		Id:         EntityID(id),
 		Parent:     parent,
 		Nodes:      make([]*Entity, 0),
-		Transform:  NewTransform(0, 0),
+		Transform:  transform,
 		Components: make(map[ComponentType]Component),
 	}
 }
